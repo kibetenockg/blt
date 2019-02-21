@@ -628,4 +628,24 @@ class Updates {
     }
   }
 
+  /**
+   * 9.2.4.
+   *
+   * @Update(
+   *    version = "9002004",
+   *    description = "Regenerate Pipelines file if it exists."
+   * )
+   */
+  public function update_9002004() {
+    // Check for presence of pipelines.yml files. Regenerate if present.
+    if (file_exists($this->updater->getRepoRoot() . '/acquia-pipelines.yml')) {
+      $messages[] = "pipelines.yml has been updated. Review the resulting file(s) and ensure that any customizations have been re-added.";
+      $this->updater->executeCommand("./vendor/bin/blt recipes:ci:pipelines:init");
+      $formattedBlock = $this->updater->getFormatter()->formatBlock($messages, 'ice');
+      $this->updater->getOutput()->writeln("");
+      $this->updater->getOutput()->writeln($formattedBlock);
+      $this->updater->getOutput()->writeln("");
+    }
+  }
+
 }
